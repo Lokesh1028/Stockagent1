@@ -178,7 +178,7 @@ def send_telegram_notification(message):
     except Exception as e:
         return False, f"Telegram error: {str(e)}"
 
-def send_gmail_notification(subject, body):
+def send_gmail_notification(subject, body, recipients):
     """Send notification via Gmail"""
     if not GMAIL_USER or not GMAIL_PASSWORD:
         return False, "Gmail credentials not configured"
@@ -186,7 +186,7 @@ def send_gmail_notification(subject, body):
     try:
         msg = MIMEMultipart()
         msg['From'] = GMAIL_USER
-        msg['To'] = RECIPIENT_EMAIL
+        msg['To'] = recipients
         msg['Subject'] = subject
 
         msg.attach(MIMEText(body, 'html'))
@@ -277,6 +277,8 @@ with st.sidebar:
 # Main interface
 period = st.selectbox("Select time period for insider trading data", ["Last 5 hours", "Last 12 hours", "Last 1 day", "Last 1 week"], index=3)  # Default to 1 week
 
+recipient_emails = st.text_input("Recipient Emails (comma-separated)", value=RECIPIENT_EMAIL, help="Enter multiple emails separated by commas")
+
 # Main button
 if st.button("🔄 Get Update", type="primary", use_container_width=True):
     with st.spinner("Fetching insider trading data..."):
@@ -344,7 +346,7 @@ if st.button("🔄 Get Update", type="primary", use_container_width=True):
                 with col2:
                     gmail_subject = f"Insider Trading Alert - {len(analyses)} Stocks ({period})"
                     gmail_body = format_gmail_message(analyses, period)
-                    success, message = send_gmail_notification(gmail_subject, gmail_body)
+                    success, message = send_gmail_notification(gmail_subject, gmail_body, recipient_emails)
                     if success:
                         st.success(message)
                     else:
