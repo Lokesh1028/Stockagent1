@@ -203,11 +203,11 @@ def send_gmail_notification(subject, body, recipients):
 
 def format_telegram_message(analyses, period):
     """Format message for Telegram"""
-    message = "📊 <b>Insider Trading Alert</b>\n\n"
-    message += f"<i>Top {len(analyses)} stocks by insider activity ({period})</i>\n\n"
+    message = "📊 Insider Trading Alert\n\n"
+    message += f"Top {len(analyses)} stocks by insider activity ({period})\n\n"
 
     for analysis in analyses:
-        message += f"<b>{analysis['symbol']}</b> {analysis['sentiment']}\n"
+        message += f"{analysis['symbol']} {analysis['sentiment']}\n"
         message += f"├ Buys: {analysis['total_buys']} | Sells: {analysis['total_sells']}\n"
         message += f"├ Net Flow: ${analysis['net_value']:,.0f}\n"
         message += f"└ {analysis['recommendation']}\n\n"
